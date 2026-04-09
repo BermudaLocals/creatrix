@@ -13,6 +13,9 @@ const { pool, initDB } = require('./db')
 const app = express()
 const PORT = process.env.PORT || 3000
 
+// ── TRUST PROXY (Railway runs behind reverse proxy) ──
+app.set('trust proxy', 1)
+
 // ── SECURITY ──────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }))
 app.use(cors({ origin: process.env.APP_URL, credentials: true }))
@@ -30,6 +33,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   }
 }))
