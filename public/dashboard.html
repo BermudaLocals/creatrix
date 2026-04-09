@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Creatrix</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface2: #1a1a26;
+      --border: #2a2a3a;
+      --text: #e4e4ef;
+      --text-dim: #8888a0;
+      --accent: #7c5cfc;
+      --accent-light: #9d84ff;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #f87171;
+      --radius: 12px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+    }
+    /* ── NAV ─────────────────────────────────────── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-brand {
+      font-size: 1.4rem; font-weight: 800;
+      background: linear-gradient(135deg, #7c5cfc, #b06cff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a {
+      color: var(--text-dim); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-user {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 0.85rem;
+      overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    /* ── MAIN ────────────────────────────────────── */
+    .container {
+      max-width: 1200px; margin: 0 auto;
+      padding: 2rem;
+    }
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    .page-header h1 { font-size: 1.8rem; font-weight: 700; }
+    .page-header p { color: var(--text-dim); margin-top: 0.4rem; }
+    /* ── STATS GRID ──────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--accent); }
+    .stat-label {
+      font-size: 0.82rem; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+    .stat-value {
+      font-size: 2rem; font-weight: 700;
+    }
+    .stat-change {
+      font-size: 0.82rem; margin-top: 0.4rem;
+    }
+    .stat-change.up { color: var(--green); }
+    .stat-change.down { color: var(--red); }
+    /* ── PANELS ──────────────────────────────────── */
+    .panels {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 800px) {
+      .panels { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+    }
+    .panel-title {
+      font-size: 1.05rem; font-weight: 600;
+      margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .badge {
+      font-size: 0.72rem; padding: 4px 10px;
+      border-radius: 20px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge.free { background: var(--surface2); color: var(--text-dim); }
+    .badge.pro { background: rgba(124,92,252,0.15); color: var(--accent-light); }
+    .badge.enterprise { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    /* ── RECOMMENDATIONS ─────────────────────────── */
+    .rec-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .rec-item:last-child { border-bottom: none; }
+    .rec-item h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .rec-item p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+    .rec-tag {
+      display: inline-block; font-size: 0.7rem;
+      padding: 2px 8px; border-radius: 6px;
+      background: var(--surface2); color: var(--text-dim);
+      margin-top: 0.5rem; text-transform: capitalize;
+    }
+    /* ── QUICK ACTIONS ───────────────────────────── */
+    .quick-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+    .action-btn {
+      display: block; width: 100%;
+      padding: 12px 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text); font-size: 0.9rem; font-weight: 500;
+      text-decoration: none; text-align: left;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      border-color: var(--accent); background: rgba(124,92,252,0.06);
+    }
+    .action-btn .icon { margin-right: 8px; }
+    .cta-btn {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+      font-weight: 600; text-align: center;
+    }
+    .cta-btn:hover { background: #6a48e8; }
+    /* ── LOADING ─────────────────────────────────── */
+    .loading {
+      text-align: center; padding: 3rem;
+      color: var(--text-dim);
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">Creatrix</div>
+    <div class="nav-links">
+      <a href="/dashboard" class="active">Dashboard</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/auth/logout">Sign Out</a>
+    </div>
+    <div class="nav-user">
+      <div class="avatar" id="userAvatar">?</div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Welcome back<span id="userName"></span></h1>
+      <p>Here's what's happening with your creator business.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Monthly Revenue</div>
+        <div class="stat-value">$0.00</div>
+        <div class="stat-change up">Start earning →</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Subscribers</div>
+        <div class="stat-value">0</div>
+        <div class="stat-change">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Content Views</div>
+        <div class="stat-value">0</div>
+        <div class="stat-change">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Plan</div>
+        <div class="stat-value" id="planBadge">Free</div>
+        <div class="stat-change"><a href="/pricing" style="color:var(--accent);text-decoration:none;">Upgrade →</a></div>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-title">
+          AI Recommendations
+          <span class="badge pro">AI-Powered</span>
+        </div>
+        <div id="recommendations">
+          <div class="loading"><div class="spinner"></div>Loading recommendations…</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Quick Actions</div>
+        <div class="quick-actions">
+          <a href="/onboarding" class="action-btn"><span class="icon">🚀</span> Complete Onboarding</a>
+          <a href="/pricing" class="action-btn"><span class="icon">💎</span> Upgrade Plan</a>
+          <a href="#" class="action-btn"><span class="icon">📊</span> View Analytics</a>
+          <a href="#" class="action-btn"><span class="icon">📝</span> Create Content</a>
+          <a href="#" class="action-btn cta-btn">✨ Get AI Strategy</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function init() {
+      try {
+        const meRes = await fetch('/auth/me', { credentials: 'include' })
+        if (!meRes.ok) { window.location.href = '/login'; return }
+        const { user } = await meRes.json()
+
+        document.getElementById('userName').textContent = user.name ? `, ${user.name}` : ''
+        const avatar = document.getElementById('userAvatar')
+        if (user.avatar_url) {
+          avatar.innerHTML = `<img src="${user.avatar_url}" alt="">`
+        } else {
+          avatar.textContent = (user.name || user.email || '?')[0].toUpperCase()
+        }
+
+        const planEl = document.getElementById('planBadge')
+        planEl.textContent = user.plan.charAt(0).toUpperCase() + user.plan.slice(1)
+      } catch (e) {
+        window.location.href = '/login'
+      }
+
+      try {
+        const recRes = await fetch('/api/recommendations', { credentials: 'include' })
+        const { recommendations } = await recRes.json()
+        const container = document.getElementById('recommendations')
+        container.innerHTML = recommendations.map(r => `
+          <div class="rec-item">
+            <h4>${r.title}</h4>
+            <p>${r.description}</p>
+            <span class="rec-tag">${r.category}</span>
+          </div>
+        `).join('')
+      } catch (e) {
+        document.getElementById('recommendations').innerHTML =
+          '<p style="color:var(--text-dim);padding:1rem 0;">Unable to load recommendations.</p>'
+      }
+    }
+    init()
+  </script>
+</body>
+</html>

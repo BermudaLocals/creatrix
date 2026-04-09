@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started — Creatrix</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface2: #1a1a26;
+      --border: #2a2a3a;
+      --text: #e4e4ef;
+      --text-dim: #8888a0;
+      --accent: #7c5cfc;
+      --accent-light: #9d84ff;
+      --green: #34d399;
+      --radius: 12px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 30% 20%, rgba(124,92,252,0.08), transparent),
+        radial-gradient(ellipse 500px 500px at 70% 80%, rgba(99,72,234,0.05), transparent);
+      pointer-events: none;
+    }
+    .wizard {
+      position: relative;
+      width: 100%; max-width: 560px;
+      padding: 2rem;
+    }
+    .wizard-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.5rem;
+    }
+    .wizard-header {
+      text-align: center; margin-bottom: 2rem;
+    }
+    .logo {
+      font-size: 1.6rem; font-weight: 800;
+      background: linear-gradient(135deg, #7c5cfc, #b06cff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+    .wizard-header p {
+      color: var(--text-dim); font-size: 0.9rem;
+    }
+    /* ── Progress ──────────────────────────────── */
+    .progress-bar {
+      display: flex; gap: 8px; margin-bottom: 2rem;
+    }
+    .progress-step {
+      flex: 1; height: 4px;
+      background: var(--border); border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .progress-step.active { background: var(--accent); }
+    .progress-step.done { background: var(--green); }
+    /* ── Steps ─────────────────────────────────── */
+    .step { display: none; }
+    .step.active { display: block; }
+    .step h2 {
+      font-size: 1.3rem; font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .step .subtitle {
+      color: var(--text-dim); font-size: 0.88rem;
+      margin-bottom: 1.75rem; line-height: 1.5;
+    }
+    /* ── Form elements ─────────────────────────── */
+    label {
+      display: block; font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 0.4rem; color: var(--text-dim);
+    }
+    input[type="text"], input[type="url"], select, textarea {
+      width: 100%; padding: 12px 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text);
+      font-size: 0.95rem; outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1.25rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    select { cursor: pointer; }
+    option { background: var(--surface2); color: var(--text); }
+    /* ── Chips ─────────────────────────────────── */
+    .chip-group {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .chip {
+      padding: 8px 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; font-size: 0.85rem;
+      cursor: pointer; transition: all 0.2s;
+      user-select: none;
+    }
+    .chip:hover { border-color: var(--accent); }
+    .chip.selected {
+      background: rgba(124,92,252,0.15);
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+    /* ── Buttons ────────────────────────────────── */
+    .btn-row {
+      display: flex; gap: 1rem; margin-top: 1.5rem;
+    }
+    .btn {
+      flex: 1; padding: 13px;
+      border: none; border-radius: var(--radius);
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      text-align: center;
+    }
+    .btn-back {
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-back:hover { border-color: var(--accent); }
+    .btn-next {
+      background: var(--accent); color: #fff;
+    }
+    .btn-next:hover { background: #6a48e8; }
+    .btn-next:disabled {
+      opacity: 0.4; cursor: not-allowed;
+    }
+    /* ── Success ────────────────────────────────── */
+    .success-icon {
+      width: 64px; height: 64px;
+      background: rgba(52,211,153,0.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.25rem;
+    }
+    .success-text { text-align: center; }
+    .success-text h2 { margin-bottom: 0.5rem; }
+    .success-text p {
+      color: var(--text-dim); font-size: 0.9rem;
+      line-height: 1.6; margin-bottom: 1.5rem;
+    }
+    .btn-full {
+      display: block; width: 100%; padding: 14px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius);
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      text-align: center; transition: background 0.2s;
+    }
+    .btn-full:hover { background: #6a48e8; }
+  </style>
+</head>
+<body>
+  <div class="wizard">
+    <div class="wizard-card">
+      <div class="wizard-header">
+        <div class="logo">Creatrix</div>
+        <p>Let's set up your creator profile</p>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-step active" data-step="0"></div>
+        <div class="progress-step" data-step="1"></div>
+        <div class="progress-step" data-step="2"></div>
+        <div class="progress-step" data-step="3"></div>
+      </div>
+
+      <!-- STEP 1: Creator type -->
+      <div class="step active" data-step="0">
+        <h2>What type of creator are you?</h2>
+        <p class="subtitle">Select all that apply. This helps us personalize your experience.</p>
+        <div class="chip-group" id="creatorTypes">
+          <div class="chip" data-value="youtuber">🎬 YouTuber</div>
+          <div class="chip" data-value="streamer">🎮 Streamer</div>
+          <div class="chip" data-value="podcaster">🎙️ Podcaster</div>
+          <div class="chip" data-value="writer">✍️ Writer</div>
+          <div class="chip" data-value="musician">🎵 Musician</div>
+          <div class="chip" data-value="artist">🎨 Visual Artist</div>
+          <div class="chip" data-value="educator">📚 Educator</div>
+          <div class="chip" data-value="influencer">📱 Influencer</div>
+          <div class="chip" data-value="photographer">📷 Photographer</div>
+          <div class="chip" data-value="other">🔮 Other</div>
+        </div>
+        <div class="btn-row">
+          <a href="/dashboard" class="btn btn-back" style="text-decoration:none;">Skip</a>
+          <button class="btn btn-next" id="btn0">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Platforms -->
+      <div class="step" data-step="1">
+        <h2>Where do you create?</h2>
+        <p class="subtitle">Select the platforms you're active on. We'll tailor analytics and recommendations.</p>
+        <div class="chip-group" id="platforms">
+          <div class="chip" data-value="youtube">YouTube</div>
+          <div class="chip" data-value="tiktok">TikTok</div>
+          <div class="chip" data-value="instagram">Instagram</div>
+          <div class="chip" data-value="twitter">X / Twitter</div>
+          <div class="chip" data-value="twitch">Twitch</div>
+          <div class="chip" data-value="substack">Substack</div>
+          <div class="chip" data-value="patreon">Patreon</div>
+          <div class="chip" data-value="spotify">Spotify</div>
+          <div class="chip" data-value="linkedin">LinkedIn</div>
+          <div class="chip" data-value="other">Other</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-back" onclick="goStep(0)">Back</button>
+          <button class="btn btn-next" id="btn1">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Goals -->
+      <div class="step" data-step="2">
+        <h2>What are your goals?</h2>
+        <p class="subtitle">Help us understand what you want to achieve with Creatrix.</p>
+
+        <label for="goal">Primary Goal</label>
+        <select id="goal">
+          <option value="">Select a goal…</option>
+          <option value="grow">Grow my audience</option>
+          <option value="monetize">Monetize my content</option>
+          <option value="diversify">Diversify revenue streams</option>
+          <option value="analytics">Better understand my analytics</option>
+          <option value="automate">Automate my workflow</option>
+          <option value="brand">Build brand partnerships</option>
+        </select>
+
+        <label for="audience">Current Audience Size</label>
+        <select id="audience">
+          <option value="">Select range…</option>
+          <option value="0-1k">0 – 1,000</option>
+          <option value="1k-10k">1,000 – 10,000</option>
+          <option value="10k-100k">10,000 – 100,000</option>
+          <option value="100k-1m">100,000 – 1M</option>
+          <option value="1m+">1M+</option>
+        </select>
+
+        <label for="website">Website or Portfolio (optional)</label>
+        <input type="url" id="website" placeholder="https://yoursite.com">
+
+        <div class="btn-row">
+          <button class="btn btn-back" onclick="goStep(1)">Back</button>
+          <button class="btn btn-next" id="btn2">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Bio -->
+      <div class="step" data-step="3">
+        <h2>Tell us about yourself</h2>
+        <p class="subtitle">A short bio helps our AI give better recommendations.</p>
+
+        <label for="displayName">Display Name</label>
+        <input type="text" id="displayName" placeholder="How should we address you?">
+
+        <label for="bio">Short Bio</label>
+        <textarea id="bio" placeholder="I create content about…"></textarea>
+
+        <div class="btn-row">
+          <button class="btn btn-back" onclick="goStep(2)">Back</button>
+          <button class="btn btn-next" id="btn3">Finish Setup</button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="step" data-step="4">
+        <div class="success-icon">🎉</div>
+        <div class="success-text">
+          <h2>You're all set!</h2>
+          <p>Your creator profile is ready. Head to your dashboard to explore AI-powered recommendations, analytics, and monetization tools.</p>
+          <a href="/dashboard" class="btn-full">Go to Dashboard →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let current = 0
+    const totalSteps = 4
+
+    // Chip selection
+    document.querySelectorAll('.chip-group').forEach(group => {
+      group.addEventListener('click', e => {
+        const chip = e.target.closest('.chip')
+        if (chip) chip.classList.toggle('selected')
+      })
+    })
+
+    function goStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'))
+      document.querySelector(`.step[data-step="${n}"]`).classList.add('active')
+
+      document.querySelectorAll('.progress-step').forEach((bar, i) => {
+        bar.classList.remove('active', 'done')
+        if (i < n) bar.classList.add('done')
+        else if (i === n) bar.classList.add('active')
+      })
+      current = n
+    }
+
+    // Next buttons
+    document.getElementById('btn0').addEventListener('click', () => goStep(1))
+    document.getElementById('btn1').addEventListener('click', () => goStep(2))
+    document.getElementById('btn2').addEventListener('click', () => goStep(3))
+    document.getElementById('btn3').addEventListener('click', () => {
+      // In production, POST onboarding data to API
+      goStep(4)
+    })
+  </script>
+</body>
+</html>
